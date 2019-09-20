@@ -14,38 +14,25 @@ GAME RULES:
  ***** GAME INITIALIZATION ******
  ********************************/
 
-var playerOne = {
-    score: 0,
-    currentScore: 0,
-    holdScore: function () {
+//Using a function constructor
+function Player(){
+    this.score = 0;
+    this.currentScore = 0;
+    this.holdScore = function () {
         this.score += this.currentScore;
         this.currentScore = 0;
-    },
-    addCurrentScore: function (value) {
+    };
+    this.addCurrentScore = function (value) {
         this.currentScore += value;
-    },
-    reset: function () {
+    };
+    this.reset = function () {
         this.score = 0;
         this.currentScore = 0;
     }
 }
 
-var playerTwo = {
-    score: 0,
-    currentScore: 0,
-    holdScore: function () {
-        this.score += this.currentScore;
-        this.currentScore = 0;
-    },
-    addCurrentScore: function (value) {
-        this.currentScore += value;
-    },
-    reset: function () {
-        this.score = 0;
-        this.currentScore = 0;
-    }
-}
-
+var playerOne = new Player();
+var playerTwo = new Player();
 
 var activePlayer = 0;
 var MAX_SCORE = 50;
@@ -146,7 +133,7 @@ function rollDice() {
         return;
     }
 
-    //Setting dice based on the random number
+    //Selecting dice image based on the number generated
     $dice.src = 'dice-' + number + '.png';
 
     //Adding points to the current active player
@@ -192,12 +179,13 @@ function thereIsWinner() {
         $playerTwoName.textContent = 'Winner!';
 
         $playerTwoPanel.classList.add('winner');
+
         $rollDiceButton.setAttribute('disabled', true);
         $holdPointsButton.setAttribute('disabled', true);
 
         return true;
     }
-    return false;
+    return false; 
 }
 
 function getRandomNumber(min, max) {
