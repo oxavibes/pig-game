@@ -17,6 +17,10 @@ GAME RULES:
 var playerOne = {
     score: 0,
     currentScore: 0,
+    holdScore: function(){
+        this.score += this.currentScore;
+        this.currentScore = 0;
+    },
     addCurrentScore: function(value){
         this.currentScore += value;
     },
@@ -29,6 +33,10 @@ var playerOne = {
 var playerTwo = {
     score: 0,
     currentScore: 0,
+    holdScore: function(){
+        this.score += this.currentScore;
+        this.currentScore = 0;
+    },
     addCurrentScore: function(value){
         this.currentScore += value;
     },
@@ -37,6 +45,7 @@ var playerTwo = {
         this.currentScore = 0;
     }
 }
+
 
 var activePlayer = 0;
 
@@ -48,12 +57,10 @@ var activePlayer = 0;
 //Players score
 var scorePlayerOne = document.querySelector('#score-0');
 var scorePlayerTwo = document.querySelector('#score-1');
+
 var currentScorePlayerOne = document.querySelector('#current-0');
 var currentScorePlayerTwo = document.querySelector('#current-1');
 
-//Active player panel
-var activePlayerPanel =  document.querySelector('.player-' + activePlayer + '-panel');
-var currentScoreActivePlayer = document.querySelector('#current-' + activePlayer);
 //Buttons
 var newGameButton = document.querySelector('.btn-new');
 var rollDiceButton = document.querySelector('.btn-roll');
@@ -66,34 +73,61 @@ var dice =  document.querySelector('.dice');
 ******** GAME FUNCTIONS ********
 ********************************/
 
-
 function initGame() {
     newGame();
 }
 
 function newGame() {
+    activePlayer = 0;
+
     playerOne.reset();
     playerTwo.reset();
 
     scorePlayerOne.textContent = 0;
     scorePlayerTwo.textContent = 0;
+
     currentScorePlayerOne.textContent = 0;
     currentScorePlayerTwo.textContent = 0;
 
-    activePlayerPanel.classList.add('active');
+    document.querySelector('.player-0-panel').classList.add('active');
+    document.querySelector('.player-1-panel').classList.remove('active');
+
     dice.classList.add('d-none');
 }
 
 function switchPlayer() {
-    activePlayer = (activePlayer === 0)? 1: 0;
+    //Resetting the current player score
+    document.querySelector('#current-' + activePlayer).textContent = 0;
+    
+    //Removing active class from the current player
+    document.querySelector('.player-' + activePlayer + '-panel').classList.remove('active');
+
+    //Switching to the other player
+    activePlayer = (activePlayer === 0) ? 1 : 0;
+
+    //Adding active class to the current player
+    document.querySelector('.player-' + activePlayer + '-panel').classList.add('active');
 }
 
 function rollDice() {
     //Get random number between 1 and 6
     var number = getRandomNumber(1, 6);
 
+
     if(number === 1) {
-        
+        //Switching to the other player
+        switchPlayer();
+
+        //Resetting the current player score
+        if(activePlayer === 0) {
+            playerOne.currentScore = 0;
+        } else {
+            playerTwo.currentScore = 0;
+        }
+
+
+        dice.classList.add('d-none');
+        return;
     }
         
 
@@ -115,7 +149,17 @@ function rollDice() {
 }
 
 function holdPoints() {
+    if(activePlayer === 0) {
+        playerOne.holdScore();
+        scorePlayerOne.textContent = playerOne.score;
+        currentScorePlayerOne.textContent = 0;
+    } else {
+        playerTwo.holdScore();
+        scorePlayerTwo.textContent = playerTwo.score;
+        currentScorePlayerTwo.textContent = 0;
+    }
 
+    switchPlayer();
 }
 
 function getRandomNumber(min, max) {
